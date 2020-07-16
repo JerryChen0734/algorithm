@@ -1,4 +1,6 @@
-package cn.jerrychen.queue;
+package cn.jerrychen.test;
+
+import cn.jerrychen.queue.IndexMinPriorityQueue;
 
 import java.util.HashMap;
 

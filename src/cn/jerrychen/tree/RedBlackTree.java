@@ -1,5 +1,9 @@
 package cn.jerrychen.tree;
 
+/*
+红黑树
+通过节点的旋转以及变色来维持一棵平衡性良好的二叉查找树
+ */
 public class RedBlackTree<Key extends Comparable<Key>, Value> {
     //根节点
     private Node root;
@@ -47,56 +51,58 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> {
      * @return
      */
     private boolean isRed(Node x) {
-        if (x==null){
+        if (x == null) {
             return false;
         }
-        return x.color==RED;
+        return x.color == RED;
     }
 
     /**
      * 左旋转
+     * 当某个结点的左子结点为黑色，右子结点为红色，此时需要左旋。
      *
      * @param h
      * @return
      */
+    //当前结点为h，它的右子结点为x
     private Node rotateLeft(Node h) {
-        //找到h结点的右子结点x
         Node x = h.right;
-        //找到x结点的左子结点，让x结点的左子结点称为h结点的右子结点
+        //让x的左子结点变为h的右子结点
         h.right = x.left;
-        //让h结点称为x结点的左子结点
+        //h成为x的左子节点
         x.left = h;
-        //让x结点的color属性变为h结点的color属性
+        //h的颜色赋值给x
         x.color = h.color;
-        //让h结点的color属性变为RED
+        //让h（左子节点）颜色变成red
         h.color = RED;
-
         return x;
     }
 
     /**
      * 右旋
+     * 当某个结点的左子结点是红色，且左子结点的左子结点也是红色，需要右旋
      *
      * @param h
      * @return
      */
+    //当前结点为h，它的左子结点的左子结点为x
     private Node rotateRight(Node h) {
-        //找到h结点的左子结点 x
-        Node x = h.left;
-        //让x结点的右子结点成为h结点的左子结点
+        Node x = h.right.right;
+        //让x的右子结点变为h的左子结点
         h.left = x.right;
-        //让h结点成为x结点的右子结点
+        //让h变成x的右子结点
         x.right = h;
-        //让x结点的color属性变为h结点的color属性
+        //h的颜色赋值给x
         x.color = h.color;
-        //让h结点的color属性为RED
+        //h颜色变为红色
         h.color = RED;
-
         return x;
     }
 
     /**
      * 颜色反转,相当于完成拆分4-节点
+     * 当一个结点的左子结点和右子结点的color都为RED时，需要反转
+     * 把左子结点和右子结点的颜色变为BLACK，同时让当前结点的颜色变为RED即可。
      *
      * @param h
      */
@@ -104,8 +110,9 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> {
         //当前结点变为红色
         h.color = RED;
         //左子结点和右子结点变为黑色
-        h.left.color=BLACK;
+        h.left.color = BLACK;
         h.right.color = BLACK;
+
     }
 
     /**
@@ -115,80 +122,66 @@ public class RedBlackTree<Key extends Comparable<Key>, Value> {
      * @param val
      */
     public void put(Key key, Value val) {
-        root = put(root,key,val);
-        //根结点的颜色总是黑色
-        root.color = RED;
+        root = put(root, key, val);
+        //根结点不存在父节点，所以它的颜色总是黑色
+        root.color = BLACK;
     }
-
     /**
      * 在指定树中，完成插入操作,并返回添加元素后新的树
-     *
      * @param h
      * @param key
      * @param val
      */
     private Node put(Node h, Key key, Value val) {
-        //判断h是否为空，如果为空则直接返回一个红色的结点就可以了
-        if (h == null){
-            //数量+1
+        if (h == null) {
             N++;
-            return new Node(key,val,null,null,RED);
+            //每次插入的节点初始颜色都为红色
+            return new Node(key, val, null, null, RED);
         }
-
-        //比较h结点的键和key的大小
+        //根据查找树规则添加元素
         int cmp = key.compareTo(h.key);
-        if (cmp<0){
-            //继续往左
-            h.left = put(h.left,key,val);
-
-        }else if (cmp>0){
-            //继续往右
-            h.right = put(h.right,key,val);
-
-        }else{
-            //发生值的替换
+        if (cmp < 0) {
+            h.left = put(h.left, key, val);
+        } else if (cmp > 0) {
+            h.right = put(h.right, key, val);
+        } else {
+            //相等则做更新操作
             h.value = val;
         }
-
         //进行左旋:当当前结点h的左子结点为黑色，右子结点为红色，需要左旋
-        if (isRed(h.right) && !isRed(h.left)){
+        if (isRed(h.right) && !isRed(h.left)) {
             h = rotateLeft(h);
         }
-
         //进行右旋：当当前结点h的左子结点和左子结点的左子结点都为红色，需要右旋
-        if (isRed(h.left) && isRed(h.left.left)){
+        if (isRed(h.left) && isRed(h.left.left)) {
             rotateRight(h);
         }
-
         //颜色反转：当前结点的左子结点和右子结点都为红色时，需要颜色反转
-        if (isRed(h.left) && isRed(h.right)){
+        if (isRed(h.left) && isRed(h.right)) {
             flipColors(h);
         }
-
-
-
         return h;
     }
 
     //根据key，从树中找出对应的值
     public Value get(Key key) {
-        return get(root,key);
+        return get(root, key);
     }
 
     //从指定的树x中，查找key对应的值
     public Value get(Node x, Key key) {
-        if (x == null){
+        if (x == null) {
             return null;
         }
 
         //比较x结点的键和key的大小
         int cmp = key.compareTo(x.key);
-        if (cmp<0){
-            return get(x.left,key);
-        }else if (cmp>0){
-            return get(x.right,key);
-        }else{
-           return x.value;
+        if (cmp < 0) {
+            return get(x.left, key);
+        } else if (cmp > 0) {
+            return get(x.right, key);
+        } else {
+            return x.value;
         }
 
     }

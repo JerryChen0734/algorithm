@@ -13,8 +13,8 @@ public class HeapSort {
     //将最大（最小）元素与最后的元素交换，完成排序
     void heapSort(int[] arr) {
         for (int i = arr.length; i > 0; i--) {
-        buildHeap(arr, i);
-          swap(arr, 0, i - 1);
+            buildHeap(arr, i);
+            swap(arr, 0, i - 1);
         }
     }
 

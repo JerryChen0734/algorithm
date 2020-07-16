@@ -100,9 +100,8 @@ public class IndexMinPriorityQueue<T extends Comparable<T>> {
     }
 
     //删除堆中最小的元素,并返回这个最小元素
-    public T delMin() {
+    public int delMin() {
         int min = pq[1];
-        T minObj=items[min];
         //更新qp
         qp[min] = -1;
         //更新items
@@ -112,7 +111,7 @@ public class IndexMinPriorityQueue<T extends Comparable<T>> {
         pq[N] = -1;
         N--;
         sink(1);
-        return minObj;
+        return min;
     }
 
     //使用上浮算法，使索引k处的元素能在堆中处于一个正确的位置

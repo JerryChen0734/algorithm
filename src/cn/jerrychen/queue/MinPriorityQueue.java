@@ -54,24 +54,6 @@ public class MinPriorityQueue<T extends Comparable<T>> {
 
     //使用上浮算法，使索引k处的元素能在堆中处于一个正确的位置
     private void swim(int k) {
-      /*  int parent = (k - 1) / 2;
-        int L, R;
-        for (int i = parent; i >= 0; i--) {
-            L = 2 * i + 1;
-            R = 2 * i + 2;
-            int max = i;
-            //判断左右节点和父节点哪个大，
-            if (L < N && less(L, max)) {
-                max = L;
-            }
-            if (R < N && less(R, max)) {
-                max = R;
-            }
-            if (i != max) {
-                exch(i, max);
-            }
-        }*/
-
         while (k > 1) {
             if (less(k, k / 2)) {
                 exch(k / 2, k);
